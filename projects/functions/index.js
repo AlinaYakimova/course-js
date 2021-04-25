@@ -63,16 +63,17 @@ console.log(result);
 
 // вариант с числом
 
-// function sumFnResult(a, b, func) {
-//   func(a, b);
-//   console.log(func(a, b));
-// }
+function sumFnResult(a, b, func) {
+  const varSumResult = func(a, b);
+  return varSumResult;
+}
 
-// function sum(x, y) {
-//   return x + y;
-// }
+function sum(x, y) {
+  return x + y;
+}
 
-// sumFnResult(2, 3, sum);
+const sumResult = sumFnResult(2, 3, sum);
+console.log(sumResult);
 /*
  Задание 4:
 
