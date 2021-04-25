@@ -49,29 +49,30 @@ sumWithDefaults(20);
  Пример:
    returnFnResult(() => 'привет') вернет 'привет'
  */
-function returnFnResult(text, func) {
-  func(text);
-  console.log(func(text));
+function returnFnResult(fn) {
+  const resultFn = fn();
+  return resultFn;
 }
 
-function fn(text) {
-  return text;
+function showText() {
+  return 'Привет!';
 }
 
-returnFnResult('hello!', fn);
+const result = returnFnResult(showText);
+console.log(result);
 
 // вариант с числом
 
-function sumFnResult(a, b, func) {
-  func(a, b);
-  console.log(func(a, b));
-}
+// function sumFnResult(a, b, func) {
+//   func(a, b);
+//   console.log(func(a, b));
+// }
 
-function sum(x, y) {
-  return x + y;
-}
+// function sum(x, y) {
+//   return x + y;
+// }
 
-sumFnResult(2, 3, sum);
+// sumFnResult(2, 3, sum);
 /*
  Задание 4:
 
@@ -85,13 +86,13 @@ sumFnResult(2, 3, sum);
    console.log(f()); // выведет 12
    console.log(f()); // выведет 13
  */
-function returnCounter(number) {
+function returnCounter(number = 0) {
   return function func() {
     return ++number;
   };
 }
 
-const f = returnCounter(100);
+const f = returnCounter();
 console.log(f());
 console.log(f());
 console.log(f());
@@ -114,8 +115,8 @@ function returnArgumentsArray() {
   return argumentsArray;
 }
 
-const result = returnArgumentsArray(1, 2, 3, 4, 5);
-console.log(result);
+const resultArray = returnArgumentsArray(1, 2, 3, 4, 5);
+console.log(resultArray);
 
 /*
  Задание 6 *:
@@ -132,6 +133,7 @@ console.log(result);
 
    console.log(newSum()) выведет 6
  */
+const valueArr = [3, 4, 6, 7];
 function bindFunction(fn, ...args) {
   return function fn() {
     return sumFunc(...args);
@@ -142,7 +144,7 @@ function sumFunc(a, b) {
   return a + b;
 }
 
-const newSum = bindFunction(sumFunc, 2, 4);
+const newSum = bindFunction(sumFunc, ...valueArr);
 
 console.log(newSum());
 
