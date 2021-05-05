@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <div>привет</div>
+  <div>loftschool</div>
+
+  <script>
+
+    function findError(where) {
+      const result = [];
+
+      for (const child of where.children) {
+
+        if (child.nodeName === 'DIV') {
+          result.push(child.textContent);
+        }
+      }
+      return result;
+    }
+    let resultError = findError(document.body);
+    console.log(resultError);
+  </script>
+</body>
+
+</html>
