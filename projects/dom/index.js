@@ -33,7 +33,7 @@ function prepend(what, where) {
   where.prepend(what);
 }
 
-prepend(document.querySelector('#one'), document.querySelector('#two'));
+// prepend(document.querySelector('#one'), document.querySelector('#two'));
 
 /*
  Задание 3:
@@ -56,7 +56,7 @@ prepend(document.querySelector('#one'), document.querySelector('#two'));
  */
 function findAllPSiblings(where) {
   const resultArray = [];
-  for (let i = 0; i < where.children.length - 1; i++) {
+  for (let i = 0; i < where.children.length; i++) {
     const child = where.children[i];
     const prevChild = child.previousElementSibling;
     if (child.nodeName === 'P') {
@@ -108,7 +108,21 @@ console.log(resultError);
    После выполнения функции, дерево <div></div>привет<p></p>loftchool!!!
    должно быть преобразовано в <div></div><p></p>
  */
-function deleteTextNodes(where) {}
+function deleteTextNodes(where) {
+  const w = where.childNodes;
+  for (let i = 0; i < w.length; i++) {
+    const child = where.childNodes[i];
+    console.log(child);
+    if (
+      child.nodeName === '#text' ||
+      child.nodeName === 'DIV' ||
+      child.nodeName === 'P'
+    ) {
+      child.nodeValue = '';
+      child.textContent = '';
+    }
+  }
+}
 
 /*
  Задание 6:
@@ -121,7 +135,20 @@ function deleteTextNodes(where) {}
    После выполнения функции, дерево <span> <div> <b>привет</b> </div> <p>loftchool</p> !!!</span>
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
-function deleteTextNodesRecursive(where) {}
+function deleteTextNodesRecursive(where) {
+  const w = where.childNodes;
+  for (let i = 0; i < w.length; i++) {
+    const child = where.childNodes[i];
+    // console.log(child);
+    if (child.hasChildNodes() === false) {
+      child.nodeValue = '';
+      child.textContent = '';
+    } else {
+      deleteTextNodesRecursive(child);
+    }
+  }
+}
+// deleteTextNodesRecursive(document.body);
 
 /*
  Задание 7 *:

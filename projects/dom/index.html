@@ -8,24 +8,29 @@
 
 <body>
 
-  <div>привет</div>
-  <div>loftschool</div>
+  <span>
+    <div>
+      <b>привет</b>
+    </div>
+    <p>loftchool</p>
+    !!!
+  </span>
 
   <script>
-
-    function findError(where) {
-      const result = [];
-
-      for (const child of where.children) {
-
-        if (child.nodeName === 'DIV') {
-          result.push(child.textContent);
+    function deleteTextNodesRecursive(where) {
+      const w = where.childNodes;
+      for (let i = 0; i < w.length; i++) {
+        const child = where.childNodes[i];
+        console.log(child);
+        if (child.hasChildNodes() === false) {
+          child.nodeValue = '';
+          child.textContent = '';
+        } else {
+          deleteTextNodesRecursive(child);
         }
       }
-      return result;
     }
-    let resultError = findError(document.body);
-    console.log(resultError);
+    deleteTextNodesRecursive(document.body);
   </script>
 </body>
 
