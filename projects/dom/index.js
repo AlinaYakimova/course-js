@@ -17,8 +17,8 @@ function createDivWithText(text) {
   document.body.appendChild(element);
   return element;
 }
-const result = createDivWithText('loftschool');
-console.log(result);
+// const result = createDivWithText('loftschool');
+// console.log(result);
 
 /*
  Задание 2:
@@ -28,7 +28,6 @@ console.log(result);
  Пример:
    prepend(document.querySelector('#one'), document.querySelector('#two')) // добавит элемент переданный первым аргументом в начало элемента переданного вторым аргументом
  */
-
 function prepend(what, where) {
   where.prepend(what);
 }
@@ -65,8 +64,9 @@ function findAllPSiblings(where) {
   }
   return resultArray;
 }
-const resultSiblingsArray = findAllPSiblings(document.body);
-console.log(resultSiblingsArray);
+// const resultSiblingsArray = findAllPSiblings(document.body);
+// console.log(resultSiblingsArray);
+
 /*
  Задание 4:
 
@@ -94,8 +94,9 @@ function findError(where) {
   }
   return result;
 }
-const resultError = findError(document.body);
-console.log(resultError);
+// const resultError = findError(document.body);
+// console.log(resultError);
+
 /*
  Задание 5:
 
