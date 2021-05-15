@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 
 <head>
@@ -9,19 +9,49 @@
 </head>
 
 <body>
+  <div id="app">
+    <div id="loading-block">Загрузка...</div>
+    <div id="loading-failed">
+      <div>Не удалось загрузить города</div>
+      <button id="retry-button">Повторить</button>
+    </div>
+    <div id="filter-block">
+      <input id="filter-input" placeholder="название города" type="text">
+
+      <div id="filter-result"></div>
+    </div>
+  </div>
   <script>
+    const homeworkContainer = document.querySelector('#app');
+    /* Блок с надписью "Загрузка" */
+    const loadingBlock = homeworkContainer.querySelector('#loading-block');
+    /* Блок с надписью "Не удалось загрузить города" и кнопкой "Повторить" */
+    const loadingFailedBlock = homeworkContainer.querySelector('#loading-failed');
+    /* Кнопка "Повторить" */
+    const retryButton = homeworkContainer.querySelector('#retry-button');
+    /* Блок с текстовым полем и результатом поиска */
+    const filterBlock = homeworkContainer.querySelector('#filter-block');
+    /* Текстовое поле для поиска по городам */
+    const filterInput = homeworkContainer.querySelector('#filter-input');
+    /* Блок с результатами поиска */
+    const filterResult = homeworkContainer.querySelector('#filter-result');
+
+
+    filterBlock.classList.add('hidden');
+    loadingFailedBlock.classList.add('hidden');
+
+    
+
     function loadAndSortTowns() {
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        console.log(xhr);
-        xhr.open('GET', 'https://raw.githubusercontent.com/1smelukov/citiesTest/master/cities.json');
+        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
         xhr.responseType = 'json';
         xhr.send();
         xhr.addEventListener('load', () => {
           if ((xhr.status < 400) && (xhr.status !== 0)) {
             // setTimeout(() => {
             let sortTowns = xhr.response;
-            console.log(sortTowns);
             sortTowns.sort(function (a, b) {
               if (a.name > b.name) {
                 return 1;
@@ -33,49 +63,37 @@
             });
             // }, 1000);
             resolve(sortTowns);
-            console.log(resolve(sortTowns));
           } else {
-            reject() };
+            reject()
+          };
         });
-        // xhr.addEventListener('error', () => {
-        //   let err = xhr.status;
-        //   if (err > 400) {
-        //     return new Error('error');
-        //   }
-        //   reject(err)
-        //   console.log(reject(err));
-        // });
-
       });
     }
-    loadAndSortTowns().then(() => console.log('towns'), () => console.log('error'));
 
+let townArray = [];
 
-    // function loadAndSortTowns() {
-    //   return new Promise(function (resolve, reject) {
-    //     throw 
-    //     fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
-    //       .then(response => {
-    //         return response.json();
-    //       })
-    //       .then(towns => {
-    //         let sortTowns = towns.sort(function (a, b) {
-    //           if (a.name > b.name) {
-    //             return 1;
-    //           }
-    //           if (a.name < b.name) {
-    //             return -1;
-    //           }
-    //           return 0;
-    //         });
-    //         console.log(sortTowns);
-    //         resolve(sortTowns);
-    //       })
-    //       .catch((error) => reject(error));
-    //     console.log(reject(error));
-    //   })
-    // }
+    function loadTowns() {
+      let callPromise = loadAndSortTowns().then((response) => {return townArray = response});
+      return callPromise;
+    }
+    
+    
+    let towns = loadTowns();
+    console.log(towns);
+    
+
+    function isMatching(full, chunk) {
+      let townsToLowerCase = full.toLowerCase();
+      let chunkToLowerCase = chunk.toLowerCase();
+      let substrIsTrue = townsToLowerCase.includes(chunkToLowerCase);
+      return substrIsTrue
+    }
+
+    retryButton.addEventListener('click', () => { });
+
+    filterInput.addEventListener('input', function () { });
+
   </script>
 </body>
 
-</html> -->
+</html>

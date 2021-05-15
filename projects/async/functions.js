@@ -9,11 +9,10 @@
    delayPromise(3) // вернет promise, который будет разрешен через 3 секунды
  */
 function delayPromise(seconds) {
-  seconds = 3000;
   return new Promise(function (resolve) {
     setTimeout(function () {
       resolve();
-    }, seconds);
+    }, seconds * 1000);
   });
 }
 
@@ -86,14 +85,6 @@ function loadAndSortTowns() {
         reject();
       }
     });
-    // xhr.addEventListener('error', () => {
-    //   let err = xhr.status;
-    //   if (err > 400) {
-    //     return new Error('error');
-    //   }
-    //   reject(err)
-    //   console.log(reject(err));
-    // });
   });
 }
 
