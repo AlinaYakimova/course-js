@@ -134,19 +134,16 @@ console.log(resultArray);
 
    console.log(newSum()) выведет 6
  */
-const valueArr = [3, 4, 6, 7];
 function bindFunction(fn, ...args) {
-  return function fn() {
-    return sumFunc(...args);
-  };
-  // return fn.bind(null, ...args); - второй вариант
+  const boundFunc = fn.bind(null, ...args);
+  return boundFunc;
 }
-function sumFunc(a, b) {
+
+function summary(a, b) {
   return a + b;
 }
 
-const newSum = bindFunction(sumFunc, ...valueArr);
-
+const newSum = bindFunction(summary, 2, 4);
 console.log(newSum());
 
 export {
