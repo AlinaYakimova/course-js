@@ -171,7 +171,39 @@ function deleteTextNodesRecursive(where) {
      texts: 3
    }
  */
-function collectDOMStat(root) {}
+const resultStatObj = {
+  tags: {},
+  classes: {},
+  texts: 0,
+};
+
+function collectDOMStat(root) {
+  for (const child of root.childNodes) {
+    const childsIsTrue = child.hasChildNodes();
+    const childName = child.nodeName;
+    const childType = child.nodeType;
+    const childClasses = child.classList;
+
+    if (childsIsTrue === true) {
+      if (childType === 1 && childName !== 'SCRIPT') {
+        resultStatObj.tags[childName] = (resultStatObj.tags[childName] || 0) + 1;
+
+        for (const elem of childClasses) {
+          resultStatObj.classes[elem] = (resultStatObj.classes[elem] || 0) + 1;
+        }
+
+        collectDOMStat(child);
+      }
+    } else {
+      if (childType === 3 && child.nextSibling === null && childName === '#text') {
+        resultStatObj.texts = resultStatObj.texts
+          ? (resultStatObj.texts += 1)
+          : (resultStatObj.texts = 1);
+      }
+    }
+  }
+  return resultStatObj;
+}
 
 /*
  Задание 8 *:
