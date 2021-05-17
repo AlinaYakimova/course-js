@@ -22,29 +22,6 @@
     </div>
   </div>
   <script>
-    const homeworkContainer = document.querySelector('#app');
-    /* Блок с надписью "Загрузка" */
-    const loadingBlock = homeworkContainer.querySelector('#loading-block');
-    /* Блок с надписью "Не удалось загрузить города" и кнопкой "Повторить" */
-    const loadingFailedBlock = homeworkContainer.querySelector('#loading-failed');
-    /* Кнопка "Повторить" */
-    const retryButton = homeworkContainer.querySelector('#retry-button');
-    /* Блок с текстовым полем и результатом поиска */
-    const filterBlock = homeworkContainer.querySelector('#filter-block');
-    /* Текстовое поле для поиска по городам */
-    const filterInput = homeworkContainer.querySelector('#filter-input');
-    /* Блок с результатами поиска */
-    const filterResult = homeworkContainer.querySelector('#filter-result');
-
-
-    filterBlock.classList.add('hidden');
-    loadingFailedBlock.classList.add('hidden');
-    const hiddenBlock = document.querySelectorAll('.hidden');
-    for (const hiddenBlock of hiddenBlock) {
-      // hiddenBlock.style.display = "none";
-    }
-
-    
 
     function loadAndSortTowns() {
       return new Promise((resolve, reject) => {
@@ -74,50 +51,74 @@
       });
     }
 
-let townArray = [];
-
     function loadTowns() {
-      let callPromise = loadAndSortTowns().then((response) => {return townArray = response });
-      return callPromise;
+      return loadAndSortTowns();
     }
-    
-    
-    let towns = loadTowns();
-    console.log(townArray);
-    
 
     function isMatching(full, chunk) {
       let townsToLowerCase = full.toLowerCase();
       let chunkToLowerCase = chunk.toLowerCase();
       let substrIsTrue = townsToLowerCase.includes(chunkToLowerCase);
-      return substrIsTrue
+      return substrIsTrue;
     }
 
-    retryButton.addEventListener('click', () => { 
-      try {
+    const homeworkContainer = document.querySelector('#app');
+    /* Блок с надписью "Загрузка" */
+    const loadingBlock = homeworkContainer.querySelector('#loading-block');
+    /* Блок с надписью "Не удалось загрузить города" и кнопкой "Повторить" */
+    const loadingFailedBlock = homeworkContainer.querySelector('#loading-failed');
+    /* Кнопка "Повторить" */
+    const retryButton = homeworkContainer.querySelector('#retry-button');
+    /* Блок с текстовым полем и результатом поиска */
+    const filterBlock = homeworkContainer.querySelector('#filter-block');
+    /* Текстовое поле для поиска по городам */
+    const filterInput = homeworkContainer.querySelector('#filter-input');
+    /* Блок с результатами поиска */
+    const filterResult = homeworkContainer.querySelector('#filter-result');
 
-      } catch (error) {
-
-      }
+    retryButton.addEventListener('click', () => {
+      tryToLoad();
     });
 
-    filterInput.addEventListener('input', function (event) { 
+    filterInput.addEventListener('input', function (event) {
       filterResult.innerHTML = '';
       const fragment = document.createDocumentFragment();
+
       const inputText = this.value;
       // const inputText = filterInput.value;
 
-      townsArray.then(function (towns) {
-        return 
-        for (let i=0; i< towns.length; i++) {
-          if((inputText || inputText === 0 || inputText === '0') && isMatching(towns[i].name, inputText)) {
-            const newDiv = document.createElement('div');
-            newDiv.textContent = town.name;
-            filterResult.appendChild(newDiv);
+      loadTowns().then(function (towns) {
+
+        for (const town of towns) {
+          if ((inputText || inputText === 0 || inputText === '0') && isMatching(town.name, inputText)) {
+            const townDiv = document.createElement('div');
+            townDiv.textContent = town.name;
+            fragment.append(townDiv);
           }
         }
+        filterResult.append(fragment);
       });
     });
+
+    loadingFailedBlock.style.display = "none";
+    filterBlock.style.display = "none";
+
+    let townsArray = [];
+
+    async function tryToLoad() {
+      try {
+        townsArray = await loadTowns();
+        loadingBlock.style = "display: none";
+        loadingFailedBlock.style = "display: none";
+        filterBlock.style = "null";
+
+      } catch (error) {
+        loadingBlock.style = "display: none";
+        loadingFailedBlock.style = "null";
+      }
+    }
+
+    tryToLoad();
 
   </script>
 </body>

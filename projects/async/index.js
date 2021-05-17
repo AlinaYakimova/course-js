@@ -39,13 +39,41 @@ const homeworkContainer = document.querySelector('#app');
  Массив городов пожно получить отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
-function loadTowns() {
-  // let callPromise = loadAndSortTowns().then((response) => {return townArray = response});
-  // return callPromise;
+function loadAndSortTowns() {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(
+      'GET',
+      'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json'
+    );
+    xhr.responseType = 'json';
+    xhr.send();
+    xhr.addEventListener('load', () => {
+      if (xhr.status < 400 && xhr.status !== 0) {
+        // setTimeout(() => {
+        const sortTowns = xhr.response;
+        sortTowns.sort(function (a, b) {
+          if (a.name > b.name) {
+            return 1;
+          }
+          if (a.name < b.name) {
+            return -1;
+          }
+          return 0;
+        });
+        // }, 1000);
+        resolve(sortTowns);
+      } else {
+        reject();
+      }
+    });
+  });
 }
 
-const towns = loadTowns();
-console.log(towns);
+function loadTowns() {
+  return loadAndSortTowns();
+}
+
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
  Проверка должна происходить без учета регистра символов
@@ -58,24 +86,66 @@ console.log(towns);
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
-  return;
+  const townsToLowerCase = full.toLowerCase();
+  const chunkToLowerCase = chunk.toLowerCase();
+  const substrIsTrue = townsToLowerCase.includes(chunkToLowerCase);
+  return substrIsTrue;
 }
 
 /* Блок с надписью "Загрузка" */
-// const loadingBlock = homeworkContainer.querySelector('#loading-block');
+const loadingBlock = homeworkContainer.querySelector('#loading-block');
 /* Блок с надписью "Не удалось загрузить города" и кнопкой "Повторить" */
-// const loadingFailedBlock = homeworkContainer.querySelector('#loading-failed');
+const loadingFailedBlock = homeworkContainer.querySelector('#loading-failed');
 /* Кнопка "Повторить" */
 const retryButton = homeworkContainer.querySelector('#retry-button');
 /* Блок с текстовым полем и результатом поиска */
-// const filterBlock = homeworkContainer.querySelector('#filter-block');
+const filterBlock = homeworkContainer.querySelector('#filter-block');
 /* Текстовое поле для поиска по городам */
 const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
-// const filterResult = homeworkContainer.querySelector('#filter-result');
+const filterResult = homeworkContainer.querySelector('#filter-result');
 
-retryButton.addEventListener('click', () => {});
+retryButton.addEventListener('click', () => {
+  tryToLoad();
+});
 
-filterInput.addEventListener('input', function () {});
+filterInput.addEventListener('input', function (event) {
+  filterResult.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+
+  const inputText = this.value;
+  // const inputText = filterInput.value;
+
+  loadTowns().then((towns) => {
+    for (const town of towns) {
+      if (
+        (inputText || inputText === 0 || inputText === '0') &&
+        isMatching(town.name, inputText)
+      ) {
+        const townDiv = document.createElement('div');
+        townDiv.textContent = town.name;
+        fragment.append(townDiv);
+      }
+    }
+    filterResult.append(fragment);
+  });
+});
+
+loadingFailedBlock.style.display = 'none';
+filterBlock.style.display = 'none';
+
+async function tryToLoad() {
+  try {
+    await loadTowns();
+    loadingBlock.style = 'display: none';
+    loadingFailedBlock.style = 'display: none';
+    filterBlock.style = 'null';
+  } catch (error) {
+    loadingBlock.style = 'display: none';
+    loadingFailedBlock.style = 'null';
+  }
+}
+
+tryToLoad();
 
 export { loadTowns, isMatching };
