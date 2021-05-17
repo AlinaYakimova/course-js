@@ -91,7 +91,9 @@ function createProxy(obj) {
   return new Proxy(obj, {
     set(target, property, value) {
       if (typeof value == 'number') {
-        target[property] = value * value;
+        return (target[property] = value * value);
+      } else {
+        target[property] = 'error';
       }
     },
   });
