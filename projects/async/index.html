@@ -39,6 +39,10 @@
 
     filterBlock.classList.add('hidden');
     loadingFailedBlock.classList.add('hidden');
+    const hiddenBlock = document.querySelectorAll('.hidden');
+    for (const hiddenBlock of hiddenBlock) {
+      // hiddenBlock.style.display = "none";
+    }
 
     
 
@@ -73,13 +77,13 @@
 let townArray = [];
 
     function loadTowns() {
-      let callPromise = loadAndSortTowns().then((response) => {return townArray = response});
+      let callPromise = loadAndSortTowns().then((response) => {return townArray = response });
       return callPromise;
     }
     
     
     let towns = loadTowns();
-    console.log(towns);
+    console.log(townArray);
     
 
     function isMatching(full, chunk) {
@@ -89,9 +93,31 @@ let townArray = [];
       return substrIsTrue
     }
 
-    retryButton.addEventListener('click', () => { });
+    retryButton.addEventListener('click', () => { 
+      try {
 
-    filterInput.addEventListener('input', function () { });
+      } catch (error) {
+
+      }
+    });
+
+    filterInput.addEventListener('input', function (event) { 
+      filterResult.innerHTML = '';
+      const fragment = document.createDocumentFragment();
+      const inputText = this.value;
+      // const inputText = filterInput.value;
+
+      townsArray.then(function (towns) {
+        return 
+        for (let i=0; i< towns.length; i++) {
+          if((inputText || inputText === 0 || inputText === '0') && isMatching(towns[i].name, inputText)) {
+            const newDiv = document.createElement('div');
+            newDiv.textContent = town.name;
+            filterResult.appendChild(newDiv);
+          }
+        }
+      });
+    });
 
   </script>
 </body>
