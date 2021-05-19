@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <div id="filter-block">
+            Поиск cookie: <input id="filter-name-input" placeholder="имя cookie" type="text">
+        </div>
+        <hr>
+        <div id="add-block">
+            Добавить cookie:<br>
+            <input id="add-name-input" placeholder="имя cookie" type="text"><br>
+            <input id="add-value-input" placeholder="значение cookie" type="text"><br>
+            <button id="add-button">добавить cookie</button>
+        </div>
+        <hr>
+        <div id="list-block">
+            Доступные cookie:
+            <table id="list-table">
+                <thead>
+                    <tr>
+                        <th>имя</th>
+                        <th>значение</th>
+                        <th>удалить</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- tr добавлять сюда -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        #app input {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin: 5px 0;
+        }
+
+        #app table {
+            width: 100%;
+        }
+
+        #app table td,
+        #app table th {
+            padding: 5px;
+            text-align: left;
+        }
+
+        #app table td.value {
+            word-break: break-word;
+        }
+
+        #app tbody tr:nth-child(odd) {
+            background: #ddd;
+        }
+    </style>
+
+    <script>
+        const homeworkContainer = document.querySelector('#app');
+        // текстовое поле для фильтрации cookie
+        const filterNameInput = homeworkContainer.querySelector('#filter-name-input');
+        // текстовое поле с именем cookie
+        const addNameInput = homeworkContainer.querySelector('#add-name-input');
+        // текстовое поле со значением cookie
+        const addValueInput = homeworkContainer.querySelector('#add-value-input');
+        // кнопка "добавить cookie"
+        const addButton = homeworkContainer.querySelector('#add-button');
+        // таблица со списком cookie
+        const listTable = homeworkContainer.querySelector('#list-table tbody');
+
+        const cookiesMap = getCookies();
+        // console.log(cookiesMap.get('Alina'));
+        let filterValue = '';
+
+        updateTable();
+
+        function getCookies() {
+            return document.cookie
+                .split('; ')
+                .filter(Boolean)
+                .map((cookie) => cookie.match(/^([^=]+)=(.+)/))
+                .reduce((obj, [, name, value]) => {
+                    obj.set(name, value);
+                    return obj;
+                }, new Map());
+        }
+
+        filterNameInput.addEventListener('input', function () {
+            filterValue = this.value;
+            updateTable();
+        });
+
+        addButton.addEventListener('click', () => {
+            const name = encodeURIComponent(addNameInput.value.trim());
+            const value = encodeURIComponent(addValueInput.value.trim());
+
+            if (!name) {
+                return;
+            }
+
+            document.cookie = `${ name }=${ value }`;
+            cookiesMap.set(name, value);
+
+            addNameInput.value = '';
+            addValueInput.value = '';
+
+            updateTable();
+        });
+
+        listTable.addEventListener('click', (e) => {
+            const { role, cookieName } = e.target.dataset;
+            if (role === 'remove-cookie') {
+                cookiesMap.delete(cookieName);
+                document.cookie = `${cookieName}=deleted; max - age=0`;
+                updateTable()
+            }
+        });
+
+        function updateTable() {
+            const fragment = document.createDocumentFragment();
+            let total = 0;
+            listTable.innerHTML = '';
+
+            for (const [name, value] of cookiesMap) {
+                if (filterValue &&
+                    !name.toLowerCase().includes(filterValue.toLowerCase()) &&
+                    !value.toLowerCase().includes(filterValue.toLowerCase())
+                ) {
+                    continue;
+                }
+
+                total++;
+
+                const tr = document.createElement('tr');
+                const nameTd = document.createElement('td');
+                const valueTd = document.createElement('td');
+                const removeTd = document.createElement('td');
+                const removeButton = document.createElement('button');
+
+                removeButton.dataset.role = 'remove-cookie';
+                removeButton.dataset.cookieName = name;
+                removeButton.textContent = 'Удалить';
+                nameTd.textContent = name;
+                valueTd.textContent = value;
+                valueTd.classList.add('value');
+                tr.append(nameTd, valueTd, removeTd);
+                removeTd.append(removeButton);
+
+                fragment.append(tr);
+            }
+
+            if (total) {
+                listTable.parentNode.style = "null";
+                listTable.append(fragment);
+            } else {
+                listTable.parentNode.style = "display: none";
+            }
+        }
+    </script>
+</body>
+
+</html>
