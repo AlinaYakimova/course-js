@@ -30,6 +30,7 @@
  */
 
 import './towns.html';
+import { loadAndSortTowns } from './functions';
 
 const homeworkContainer = document.querySelector('#app');
 
@@ -39,36 +40,6 @@ const homeworkContainer = document.querySelector('#app');
  Массив городов пожно получить отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
-function loadAndSortTowns() {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open(
-      'GET',
-      'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json'
-    );
-    xhr.responseType = 'json';
-    xhr.send();
-    xhr.addEventListener('load', () => {
-      if (xhr.status < 400 && xhr.status !== 0) {
-        // setTimeout(() => {
-        const sortTowns = xhr.response;
-        sortTowns.sort(function (a, b) {
-          if (a.name > b.name) {
-            return 1;
-          }
-          if (a.name < b.name) {
-            return -1;
-          }
-          return 0;
-        });
-        // }, 1000);
-        resolve(sortTowns);
-      } else {
-        reject();
-      }
-    });
-  });
-}
 
 function loadTowns() {
   return loadAndSortTowns();
@@ -118,10 +89,7 @@ filterInput.addEventListener('input', function (event) {
 
   loadTowns().then((towns) => {
     for (const town of towns) {
-      if (
-        (inputText || inputText === 0 || inputText === '0') &&
-        isMatching(town.name, inputText)
-      ) {
+      if (inputText && isMatching(town.name, inputText)) {
         const townDiv = document.createElement('div');
         townDiv.textContent = town.name;
         fragment.append(townDiv);
@@ -131,8 +99,8 @@ filterInput.addEventListener('input', function (event) {
   });
 });
 
-loadingFailedBlock.style.display = 'none';
-filterBlock.style.display = 'none';
+loadingFailedBlock.style = 'display: none';
+filterBlock.style = 'display: none';
 
 async function tryToLoad() {
   try {
