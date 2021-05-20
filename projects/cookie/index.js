@@ -85,7 +85,7 @@ listTable.addEventListener('click', (e) => {
   const { role, cookieName } = e.target.dataset;
   if (role === 'remove-cookie') {
     cookiesMap.delete(cookieName);
-    document.cookie = `${cookieName}=deleted; max - age=0`;
+    document.cookie = `${cookieName}=;expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     updateTable();
   }
 });
