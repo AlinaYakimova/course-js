@@ -195,7 +195,7 @@ function collectDOMStat(root) {
         collectDOMStat(child);
       }
     } else {
-      if (childType === 3 && child.nextSibling === null && childName === '#text') {
+      if ((childType === 3 && child.nextSibling === null) || child.textContent === ' ') {
         resultStatObj.texts = resultStatObj.texts
           ? (resultStatObj.texts += 1)
           : (resultStatObj.texts = 1);
