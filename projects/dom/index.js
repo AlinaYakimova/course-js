@@ -238,42 +238,52 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+  const arrayAddNodes = [];
+  const arrayRemoveNodes = [];
+
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       // проверим новые узлы, есть ли что-то
 
-      if (mutation.target.nodeName === 'SCRIPT') continue;
+      if (mutation.type === 'childList') {
+        if (mutation.target.nodeName === 'SCRIPT') continue;
 
-      if (mutation.addedNodes) {
-        for (const node of mutation.addedNodes) {
-          // перебираем узлы из добавленных
+        if (mutation.addedNodes.length > 0) {
+          for (const node of mutation.addedNodes) {
+            // перебираем узлы из добавленных
 
-          if (
-            !(node instanceof HTMLElement) ||
-            mutation.addedNodes[0].nodeName === 'SCRIPT'
-          )
-            continue; // отслеживаем только узлы-элементы, другие (текстовые) и script пропускаем
-          console.log('addedNodes', node);
-          fn({
-            type: 'insert',
-            nodes: [mutation.addedNodes[0]],
-          });
+            if (
+              !(node instanceof HTMLElement) ||
+              mutation.addedNodes[0].nodeName === 'SCRIPT'
+            )
+              continue; // отслеживаем только узлы-элементы, другие (текстовые) и script пропускаем
+
+            arrayAddNodes.push(node);
+          }
         }
-      }
-      if (mutation.removedNodes) {
-        for (const node of mutation.removedNodes) {
-          // перебираем узлы из удаленных
+        if (mutation.removedNodes.length > 0) {
+          for (const node of mutation.removedNodes) {
+            // перебираем узлы из удаленных
 
-          if (!(node instanceof HTMLElement)) continue; // отслеживаем только узлы-элементы, другие (текстовые) и script пропускаем
-          console.log('removedNodes', node);
-          fn({
-            type: 'remove',
-            nodes: [mutation.removedNodes[0]],
-          });
+            if (!(node instanceof HTMLElement)) continue; // отслеживаем только узлы-элементы, другие (текстовые) и script пропускаем
+
+            arrayRemoveNodes.push(node);
+          }
         }
       }
     }
   });
+
+  fn({
+    type: 'insert',
+    nodes: arrayAddNodes,
+  });
+
+  fn({
+    type: 'remove',
+    nodes: arrayRemoveNodes,
+  });
+
   observer.observe(where, { childList: true, subtree: true });
 }
 
