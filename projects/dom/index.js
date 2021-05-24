@@ -238,10 +238,10 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
-  const arrayAddNodes = [];
-  const arrayRemoveNodes = [];
-
   const observer = new MutationObserver((mutations) => {
+    let arrayAddNodes = [];
+    let arrayRemoveNodes = [];
+
     for (const mutation of mutations) {
       // проверим новые узлы, есть ли что-то
 
@@ -272,20 +272,38 @@ function observeChildNodes(where, fn) {
         }
       }
     }
-  });
-
-  fn({
-    type: 'insert',
-    nodes: arrayAddNodes,
-  });
-
-  fn({
-    type: 'remove',
-    nodes: arrayRemoveNodes,
+    if (arrayAddNodes.length > 0) {
+      fn({
+        type: 'insert',
+        nodes: arrayAddNodes,
+      });
+    }
+    if (arrayRemoveNodes.length > 0) {
+      fn({
+        type: 'remove',
+        nodes: arrayRemoveNodes,
+      });
+    }
+    arrayAddNodes = [];
+    arrayRemoveNodes = [];
   });
 
   observer.observe(where, { childList: true, subtree: true });
 }
+
+// const firstTag = document.createElement('div');
+// firstTag.textContent = 'first DIV';
+
+// const secondTag = document.createElement('p');
+// secondTag.textContent = 'second DIV';
+
+// const innertTag = document.querySelector('.some-inner-class');
+
+// innertTag.appendChild(secondTag);
+// document.body.appendChild(firstTag);
+
+// const removeTag = document.querySelector('span');
+// removeTag.remove();
 
 export {
   createDivWithText,
